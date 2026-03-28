@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barbershop Packages — Automation for Small Business</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #111110;
+    --card: #F0EBE1;
+    --card2: #E8E2D6;
+    --accent-red: #D94F3D;
+    --accent-green: #5C8B5A;
+    --accent-orange: #E8833A;
+    --text-dark: #1A1A18;
+    --text-muted: #6B6B65;
+    --text-light: #F0EBE1;
+    --gold: #C9A84C;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-light);
+    font-family: 'Manrope', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 2rem 3rem;
+    position: relative;
+    z-index: 10;
+  }
+
+  .brand {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #888;
+    line-height: 1.6;
+  }
+
+  .since {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: #888;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    text-align: center;
+    padding: 2rem 2rem 4rem;
+    position: relative;
+    z-index: 10;
+  }
+
+  .hero h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(3.5rem, 10vw, 8rem);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--text-light);
+  }
+
+  .hero-sub {
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    color: #888;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── PACKAGES ── */
+  .packages {
+    padding: 1rem 2rem 5rem;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .pkg-card {
+    background: var(--card);
+    border-radius: 1.2rem;
+    padding: 2rem 2.2rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1.5rem;
+    align-items: start;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: default;
+  }
+
+  .pkg-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+  }
+
+  .pkg-card .bar {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 5px;
+    border-radius: 0;
+  }
+
+  .pkg-card.junior .bar { background: var(--accent-red); }
+  .pkg-card.senior .bar { background: var(--accent-green); }
+  .pkg-card.top .bar { background: var(--accent-orange); }
+
+  .pkg-card.popular {
+    background: #1E1E1B;
+    color: var(--text-light);
+    outline: 1px solid #333;
+  }
+
+  .popular-badge {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.5rem;
+    background: var(--accent-green);
+    color: white;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.7rem;
+    border-radius: 2rem;
+  }
+
+  .pkg-left { display: flex; flex-direction: column; gap: 0.4rem; }
+
+  .pkg-name {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    letter-spacing: 0.02em;
+  }
+
+  .pkg-card.popular .pkg-name { color: var(--text-light); }
+
+  .pkg-desc {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 400;
+    max-width: 260px;
+    line-height: 1.5;
+  }
+
+  .pkg-card.popular .pkg-desc { color: #888; }
+
+  .pkg-price-block { text-align: right; }
+
+  .pkg-price {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    white-space: nowrap;
+  }
+
+  .pkg-card.popular .pkg-price { color: var(--text-light); }
+
+  .pkg-monthly {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-top: 0.2rem;
+  }
+
+  .pkg-card.popular .pkg-monthly { color: #888; }
+
+  .pkg-features {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .feat-tag {
+    background: rgba(0,0,0,0.08);
+    color: var(--text-dark);
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 0.35rem 0.75rem;
+    border-radius: 2rem;
+    white-space: nowrap;
+  }
+
+  .pkg-card.popular .feat-tag {
+    background: rgba(255,255,255,0.08);
+    color: #ccc;
+  }
+
+  .feat-tag.highlight {
+    background: var(--accent-orange);
+    color: white;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    width: 60px;
+    height: 1px;
+    background: #333;
+    margin: 0 auto 4rem;
+  }
+
+  /* ── SECTION ── */
+  .section {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 2rem 5rem;
+    position: relative;
+    z-index: 10;
+  }
+
+  .section-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #555;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(1.6rem, 4vw, 2.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--text-light);
+    margin-bottom: 2.5rem;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .step {
+    background: #1A1A18;
+    border: 1px solid #2A2A27;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    transition: border-color 0.3s;
+  }
+
+  .step:hover { border-color: #444; }
+
+  .step-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #444;
+    background: #222;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .step-info h4 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #ddd;
+    margin-bottom: 0.3rem;
+  }
+
+  .step-info p {
+    font-size: 0.75rem;
+    color: #666;
+    line-height: 1.5;
+  }
+
+  /* ── WHY US ── */
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .why-card {
+    background: #151513;
+    border: 1px solid #222;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    transition: all 0.3s;
+  }
+
+  .why-card:hover {
+    border-color: #3A3A37;
+    transform: translateY(-2px);
+  }
+
+  .why-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .why-card h4 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-light);
+    margin-bottom: 0.4rem;
+  }
+
+  .why-card p {
+    font-size: 0.78rem;
+    color: #666;
+    line-height: 1.6;
+  }
+
+  /* ── FAQ ── */
+  .faq-list { display: flex; flex-direction: column; gap: 0.6rem; }
+
+  .faq-item {
+    background: #161614;
+    border: 1px solid #222;
+    border-radius: 0.8rem;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .faq-item:hover { border-color: #333; }
+
+  .faq-item.open { border-color: #3A3A37; }
+
+  .faq-q {
+    padding: 1.1rem 1.4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #ddd;
+    user-select: none;
+  }
+
+  .faq-arrow {
+    font-size: 0.7rem;
+    color: #555;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+    margin-left: 1rem;
+  }
+
+  .faq-item.open .faq-arrow { transform: rotate(180deg); color: #888; }
+
+  .faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, padding 0.3s;
+    font-size: 0.8rem;
+    color: #666;
+    line-height: 1.7;
+    padding: 0 1.4rem;
+  }
+
+  .faq-item.open .faq-a {
+    max-height: 200px;
+    padding: 0 1.4rem 1.1rem;
+  }
+
+  /* ── CTA ── */
+  .cta-section {
+    margin: 0 2rem 5rem;
+    max-width: 860px;
+    margin-left: auto;
+    margin-right: auto;
+    background: var(--card);
+    border-radius: 1.5rem;
+    padding: 3.5rem 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    z-index: 10;
+  }
+
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(93,139,90,0.12), transparent 70%);
+    border-radius: 50%;
+  }
+
+  .cta-section h2 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+    font-weight: 800;
+    color: var(--text-dark);
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  .cta-section p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    max-width: 460px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    background: var(--text-dark);
+    color: var(--text-light);
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 1rem 2.2rem;
+    border-radius: 3rem;
+    text-decoration: none;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+  }
+
+  .cta-btn:hover {
+    background: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+  }
+
+  .cta-btn[style*="25D366"]:hover {
+    background: #1ebc57 !important;
+  }
+
+  .cta-small {
+    margin-top: 1rem;
+    font-size: 0.72rem;
+    color: #aaa;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid #1E1E1C;
+    padding: 2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-brand {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #444;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .footer-links a {
+    font-size: 0.75rem;
+    color: #555;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: #aaa; }
+
+  .footer-right {
+    font-size: 0.72rem;
+    color: #444;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero h1 { animation: fadeUp 0.9s ease both; }
+  .hero-sub { animation: fadeUp 0.9s 0.2s ease both; }
+  .pkg-card:nth-child(1) { animation: fadeUp 0.7s 0.1s ease both; }
+  .pkg-card:nth-child(2) { animation: fadeUp 0.7s 0.2s ease both; }
+  .pkg-card:nth-child(3) { animation: fadeUp 0.7s 0.3s ease both; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    header { padding: 1.5rem; }
+    .packages { padding: 1rem 1rem 3rem; }
+    .pkg-card { grid-template-columns: 1fr; }
+    .pkg-price-block { text-align: left; }
+    .steps, .why-grid { grid-template-columns: 1fr; }
+    .section { padding: 0 1rem 3rem; }
+    .cta-section { margin: 0 1rem 3rem; padding: 2rem 1.5rem; }
+    footer { padding: 1.5rem; flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="brand">automation<br>for small business</div>
+  <div class="since">Est. March 2026</div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>Barbershop<br>Packages</h1>
+  <p class="hero-sub">Автоматизация записи, ботов и аналитики — под ключ за 7 дней</p>
+</section>
+
+<!-- PACKAGES -->
+<div class="packages">
+
+  <!-- JUNIOR -->
+  <div class="pkg-card junior">
+    <div class="bar"></div>
+    <div class="pkg-left">
+      <div class="pkg-name">JUNIOR ПАКЕТ</div>
+      <div class="pkg-desc">Идеально для старта — бот, сайт и автоматизация записи под ключ</div>
+    </div>
+    <div class="pkg-price-block">
+      <div class="pkg-price">49 900 ₸</div>
+      <div class="pkg-monthly">14 900 ₸ / мес — поддержка</div>
+    </div>
+    <div class="pkg-features">
+      <span class="feat-tag">Telegram бот с ИИ</span>
+      <span class="feat-tag">Онлайн-запись без приложений</span>
+      <span class="feat-tag">Авто-напоминания за 24ч</span>
+      <span class="feat-tag">До 3 мастеров</span>
+    </div>
+  </div>
+
+  <!-- SENIOR -->
+  <div class="pkg-card popular senior">
+    <div class="bar"></div>
+    <div class="popular-badge">⭐ Популярный выбор</div>
+    <div class="pkg-left">
+      <div class="pkg-name">SENIOR ПАКЕТ</div>
+      <div class="pkg-desc">Для барбершопа, который хочет расти — аналитика, база клиентов и свой бренд-бот</div>
+    </div>
+    <div class="pkg-price-block">
+      <div class="pkg-price">69 900 ₸</div>
+      <div class="pkg-monthly">24 900 ₸ / мес — поддержка</div>
+    </div>
+    <div class="pkg-features">
+      <span class="feat-tag">Всё из Junior</span>
+      <span class="feat-tag">WhatsApp + Telegram бот</span>
+      <span class="feat-tag">Кабинет администратора</span>
+      <span class="feat-tag">Кабинет мастера</span>
+      <span class="feat-tag">База клиентов + аналитика</span>
+      <span class="feat-tag">До 6 мастеров</span>
+    </div>
+  </div>
+
+  <!-- TOP -->
+  <div class="pkg-card top">
+    <div class="bar"></div>
+    <div class="pkg-left">
+      <div class="pkg-name">TOP ПАКЕТ</div>
+      <div class="pkg-desc">Полная автоматизация — от записи до возврата потерянных клиентов</div>
+    </div>
+    <div class="pkg-price-block">
+      <div class="pkg-price">99 900 ₸</div>
+      <div class="pkg-monthly">34 900 ₸ / мес — поддержка</div>
+    </div>
+    <div class="pkg-features">
+      <span class="feat-tag">Всё из Senior</span>
+      <span class="feat-tag">Кастомизация под бренд</span>
+      <span class="feat-tag">Авто-рассылки потерянным</span>
+      <span class="feat-tag highlight">Приоритетная поддержка 24/7</span>
+      <span class="feat-tag">∞ мастеров</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <div class="section-label">Процесс</div>
+  <h2 class="section-title">Запустим ваш<br>барбершоп за 7 дней</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-info">
+        <h4>День 1–2 — Созвон</h4>
+        <p>Разбираем ваш барбершоп, собираем всю нужную информацию и договариваемся о деталях</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-info">
+        <h4>День 3–5 — Настройка</h4>
+        <p>Создаём бота, сайт и кабинеты. Настраиваем под ваш бренд и расписание</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-info">
+        <h4>День 6 — Тест</h4>
+        <p>Прогоняем всё вместе, вносим правки, обучаем вашу команду работе с системой</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-info">
+        <h4>День 7 — Запуск 🚀</h4>
+        <p>Ваш барбершоп принимает записи автоматически. Без администратора. 24/7</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="section">
+  <div class="section-label">Преимущества</div>
+  <h2 class="section-title">Почему барбершопы<br>выбирают нас</h2>
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="why-icon">🤖</div>
+      <h4>Бот работает 24/7</h4>
+      <p>Клиент записывается даже ночью и в выходные. Без администратора. Без пропущенных звонков.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">📊</div>
+      <h4>Вы видите всё</h4>
+      <p>Кто пришёл, кто не вернулся, сколько заработали — вся аналитика в одном кабинете.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">⚡</div>
+      <h4>Запуск за 7 дней</h4>
+      <p>Не месяц ожидания. Через неделю после оплаты ваш бот уже принимает записи.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🔒</div>
+      <h4>Ваши данные — ваши</h4>
+      <p>Никаких скрытых условий. Все данные клиентов принадлежат только вам.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section">
+  <div class="section-label">FAQ</div>
+  <h2 class="section-title">Частые вопросы</h2>
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-q">
+        Нужны ли технические знания?
+        <span class="faq-arrow">▼</span>
+      </div>
+      <div class="faq-a">Нет. Мы всё настраиваем сами и обучаем вашу команду. Вам нужен только телефон и желание автоматизировать бизнес.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">
+        Что входит в ежемесячную оплату?
+        <span class="faq-arrow">▼</span>
+      </div>
+      <div class="faq-a">Поддержка бота, хостинг сайта, все обновления и ответы на ваши вопросы в течение 24 часов. В Top пакете — ответ в течение 3 часов.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">
+        Можно ли сменить пакет позже?
+        <span class="faq-arrow">▼</span>
+      </div>
+      <div class="faq-a">Да, в любой момент. Доплачиваете разницу и переходите на следующий уровень. Никаких штрафов и сложностей.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">
+        А если бот сломается?
+        <span class="faq-arrow">▼</span>
+      </div>
+      <div class="faq-a">Чиним бесплатно в течение 24 часов. В Top пакете — в течение 3 часов. За всё время работы критических сбоев не было.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>Готовы автоматизировать<br>свой барбершоп?</h2>
+  <p>Оставьте заявку — созвонимся, разберём ваш барбершоп и подберём нужный пакет. Бесплатно и без обязательств.</p>
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+    <a href="https://t.me/idrisiuu" class="cta-btn">Telegram →</a>
+    <a href="https://wa.me/77478090181" class="cta-btn" style="background:#25D366;">WhatsApp →</a>
+  </div>
+  <div class="cta-small">Отвечаем в течение 1 часа в рабочее время</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">Automation for Small Business</div>
+  <div class="footer-links">
+    <a href="https://t.me/idrisiuu">Telegram</a>
+    <a href="https://instagram.com/idrise">Instagram</a>
+    <a href="https://wa.me/77478090181">WhatsApp</a>
+  </div>
+  <div class="footer-right">© 2026</div>
+</footer>
+
+<script>
+  // FAQ toggle
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-q').addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.step, .why-card, .faq-item').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
